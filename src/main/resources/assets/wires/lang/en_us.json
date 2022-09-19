@@ -1,0 +1,8 @@
+{
+  "itemGroup.wires.core": "Wires (Core)",
+  "item.wires.wires_pole": "Wires Pole",
+  "item.wires.wire": "Wire",
+  "item.wires.insulator": "Insulator",
+  "block.wires.wires_pole": "Wires Pole",
+  "block.wires.insulator": "Insulator"
+}

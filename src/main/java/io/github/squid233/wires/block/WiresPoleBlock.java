@@ -1,0 +1,96 @@
+package io.github.squid233.wires.block;
+
+import net.minecraft.block.*;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * @author squid233
+ * @since 0.1.0
+ */
+public final class WiresPoleBlock extends HorizontalConnectingBlock {
+    public WiresPoleBlock(Settings settings) {
+        super(4f, 4f, 16f, 16f, 16f, settings);
+        setDefaultState(stateManager.getDefaultState()
+            .with(NORTH, false)
+            .with(EAST, false)
+            .with(SOUTH, false)
+            .with(WEST, false)
+            .with(WATERLOGGED, false)
+        );
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        var world = ctx.getWorld();
+        var pos = ctx.getBlockPos();
+        var fluid = world.getFluidState(pos);
+        var pn = pos.north();
+        var ps = pos.south();
+        var pw = pos.west();
+        var pe = pos.east();
+        var sn = world.getBlockState(pn);
+        var ss = world.getBlockState(ps);
+        var sw = world.getBlockState(pw);
+        var se = world.getBlockState(pe);
+        return getDefaultState()
+            .with(NORTH, connectsTo(sn, sn.isSideSolidFullSquare(world, pn, Direction.SOUTH)))
+            .with(SOUTH, connectsTo(ss, ss.isSideSolidFullSquare(world, pn, Direction.NORTH)))
+            .with(WEST, connectsTo(sw, sw.isSideSolidFullSquare(world, pn, Direction.EAST)))
+            .with(EAST, connectsTo(se, se.isSideSolidFullSquare(world, pn, Direction.WEST)))
+            .with(WATERLOGGED, fluid.getFluid() == Fluids.WATER);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(WATERLOGGED)) {
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
+        return direction.getAxis().isHorizontal()
+            ? state.with(FACING_PROPERTIES.get(direction),
+            connectsTo(neighborState, neighborState.isSideSolidFullSquare(world, neighborPos, direction.getOpposite())))
+            : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
+    public VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return VoxelShapes.empty();
+    }
+
+    @Override
+    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
+        if (stateFrom.isOf(this)) {
+            if (!direction.getAxis().isHorizontal()) {
+                return true;
+            }
+            if (state.get(FACING_PROPERTIES.get(direction)) && stateFrom.get(FACING_PROPERTIES.get(direction.getOpposite()))) {
+                return true;
+            }
+        }
+        return super.isSideInvisible(state, stateFrom, direction);
+    }
+
+    public static boolean connectsTo(BlockState state, boolean solidFullSquare) {
+        return !cannotConnect(state) && solidFullSquare ||
+               state.getBlock() instanceof WiresPoleBlock ||
+               state.getBlock() instanceof PaneBlock ||
+               state.isIn(BlockTags.WALLS);
+    }
+}

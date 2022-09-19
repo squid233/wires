@@ -1,0 +1,8 @@
+{
+  "itemGroup.wires.core": "线缆 (核心)",
+  "item.wires.wires_pole": "架线柱",
+  "item.wires.wire": "线缆",
+  "item.wires.insulator": "绝缘体",
+  "block.wires.wires_pole": "架线柱",
+  "block.wires.insulator": "绝缘体"
+}

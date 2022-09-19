@@ -1,0 +1,105 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_post"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "false",
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_cap",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "south": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_cap",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "south": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_cap",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true",
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_cap",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_side",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_side",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_side",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_side",
+        "y": 270,
+        "uvlock": true
+      }
+    }
+  ]
+}
