@@ -1,8 +1,11 @@
 package io.github.squid233.wires.client;
 
 import io.github.squid233.wires.block.ModBlocks;
+import io.github.squid233.wires.client.render.block.entity.InsulatorBlockEntityRenderer;
+import io.github.squid233.wires.block.entity.ModBlockEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
 
 /**
@@ -13,5 +16,6 @@ public final class WiresClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WIRES_POLE, RenderLayer.getCutoutMipped());
+        BlockEntityRendererRegistry.register(ModBlockEntities.INSULATOR, InsulatorBlockEntityRenderer::new);
     }
 }

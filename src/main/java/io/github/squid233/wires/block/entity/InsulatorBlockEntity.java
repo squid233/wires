@@ -1,5 +1,7 @@
 package io.github.squid233.wires.block.entity;
 
+import io.github.squid233.wires.block.InsulatorBlock;
+import io.github.squid233.wires.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -16,9 +18,47 @@ public final class InsulatorBlockEntity extends BlockEntity {
         super(ModBlockEntities.INSULATOR, pos, state);
     }
 
+    private void _connect(int targetX, int targetY, int targetZ) {
+        connectedTo = new BlockPos(targetX, targetY, targetZ);
+        var state = getCachedState().with(InsulatorBlock.CONNECTED, true);
+        setCachedState(state);
+        if (world != null) {
+            world.setBlockState(pos, state);
+        }
+        markDirty();
+    }
+
+    public void connect(int targetX, int targetY, int targetZ) {
+        _connect(targetX, targetY, targetZ);
+        if (world != null && world.getBlockEntity(connectedTo) instanceof InsulatorBlockEntity insulator) {
+            insulator._connect(pos.getX(), pos.getY(), pos.getZ());
+        }
+    }
+
+    private void _disconnect() {
+        connectedTo = null;
+        var state = getCachedState().with(InsulatorBlock.CONNECTED, false);
+        setCachedState(state);
+        if (world != null && world.getBlockState(pos).isOf(ModBlocks.INSULATOR)) {
+            world.setBlockState(pos, state);
+        }
+        markDirty();
+    }
+
+    public void disconnect() {
+        if (world != null && world.getBlockEntity(connectedTo) instanceof InsulatorBlockEntity insulator) {
+            insulator._disconnect();
+        }
+        _disconnect();
+    }
+
+    public BlockPos getConnectedTo() {
+        return connectedTo;
+    }
+
     @Override
     public NbtCompound toInitialChunkDataNbt() {
-        return createNbtWithId();
+        return createNbtWithIdentifyingData();
     }
 
     @Override

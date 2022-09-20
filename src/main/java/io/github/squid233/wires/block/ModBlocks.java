@@ -17,7 +17,7 @@ public final class ModBlocks {
     public static final Block WIRES_POLE = register("wires_pole",
         new WiresPoleBlock(AbstractBlock.Settings.copy(Blocks.COBBLESTONE_WALL)));
     public static final Block INSULATOR = register("insulator",
-        new Block(AbstractBlock.Settings.of(Material.METAL).strength(5f, 6f).sounds(BlockSoundGroup.METAL)));
+        new InsulatorBlock(AbstractBlock.Settings.of(Material.METAL).strength(5f, 6f).sounds(BlockSoundGroup.METAL)));
 
     private static <T extends Block> T register(String name, T block) {
         return Registry.register(Registry.BLOCK, new Identifier(Wires.NAMESPACE, name), block);

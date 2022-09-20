@@ -3,6 +3,7 @@
   "item.wires.wires_pole": "Wires Pole",
   "item.wires.wire": "Wire",
   "item.wires.insulator": "Insulator",
+  "item.tooltip.wires.insulator.connecting": "Connecting: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
   "block.wires.insulator": "Insulator"
 }

@@ -3,6 +3,7 @@
   "item.wires.wires_pole": "架线柱",
   "item.wires.wire": "线缆",
   "item.wires.insulator": "绝缘体",
+  "item.tooltip.wires.insulator.connecting": "连接中: %d, %d, %d",
   "block.wires.wires_pole": "架线柱",
   "block.wires.insulator": "绝缘体"
 }

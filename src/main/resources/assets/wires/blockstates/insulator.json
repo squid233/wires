@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "wires:block/insulator",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "wires:block/insulator",
+      "x": 270
+    },
+    "facing=north": {
+      "model": "wires:block/insulator"
+    },
+    "facing=south": {
+      "model": "wires:block/insulator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wires:block/insulator",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "wires:block/insulator",
+      "y": 90
+    }
+  }
+}
