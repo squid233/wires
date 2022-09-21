@@ -6,7 +6,6 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -70,15 +69,6 @@ public final class InsulatorBlock extends FacingBlock implements BlockEntityProv
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new InsulatorBlockEntity(pos, state);
-    }
-
-    @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
-        super.afterBreak(world, player, pos, state, blockEntity, stack);
-        if (blockEntity instanceof InsulatorBlockEntity insulator) {
-            // TODO: 2022/9/20 Not affected ?
-            insulator.disconnect();
-        }
     }
 
     @Override

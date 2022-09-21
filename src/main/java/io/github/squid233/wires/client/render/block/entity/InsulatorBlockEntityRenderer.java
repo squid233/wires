@@ -21,19 +21,21 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
     @Override
     public void render(InsulatorBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var target = entity.getConnectedTo();
-        if (target != null && entity.getCachedState().get(InsulatorBlock.CONNECTED)) {
-            var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
-            matrices.push();
-            var pos = entity.getPos();
-            matrices.translate(.5, .5, .5);
-            var entry = matrices.peek();
-            float x = target.getX() - pos.getX();
-            float y = target.getY() - pos.getY();
-            float z = target.getZ() - pos.getZ();
-            renderLine(0f, 0f, 0f, buffer, entry);
-            renderLine(x, y, z, buffer, entry);
-            matrices.pop();
+        var list = entity.getConnectedTo();
+        if (entity.getCachedState().get(InsulatorBlock.CONNECTED)) {
+            for (var target : list) {
+                var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
+                matrices.push();
+                var pos = entity.getPos();
+                matrices.translate(.5, .5, .5);
+                var entry = matrices.peek();
+                float x = target.getX() - pos.getX();
+                float y = target.getY() - pos.getY();
+                float z = target.getZ() - pos.getZ();
+                renderLine(0f, 0f, 0f, buffer, entry);
+                renderLine(x, y, z, buffer, entry);
+                matrices.pop();
+            }
         }
     }
 
