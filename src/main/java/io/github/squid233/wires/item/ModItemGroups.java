@@ -12,5 +12,5 @@ import net.minecraft.util.Identifier;
  */
 public final class ModItemGroups {
     public static final ItemGroup CORE = FabricItemGroupBuilder.build(new Identifier(Wires.NAMESPACE, "core"),
-        () -> new ItemStack(ModItems.WIRES_POLE));
+        () -> new ItemStack(ModItems.WIRE));
 }

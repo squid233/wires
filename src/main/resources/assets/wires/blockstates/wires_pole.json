@@ -100,6 +100,42 @@
         "y": 270,
         "uvlock": true
       }
+    },
+    {
+      "when": {
+        "north": "true",
+        "post": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_post"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "post": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_post"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "post": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_post"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "post": "true"
+      },
+      "apply": {
+        "model": "wires:block/wires_pole_post"
+      }
     }
   ]
 }

@@ -1,23 +1,40 @@
 package io.github.squid233.wires.block;
 
+import io.github.squid233.wires.Wires;
 import net.minecraft.block.*;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.tag.BlockTags;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author squid233
  * @since 0.1.0
  */
 public final class WiresPoleBlock extends HorizontalConnectingBlock {
+    public static final BooleanProperty POST = BooleanProperty.of("post");
+
     public WiresPoleBlock(Settings settings) {
         super(4f, 4f, 16f, 16f, 16f, settings);
         setDefaultState(stateManager.getDefaultState()
@@ -26,12 +43,31 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
             .with(SOUTH, false)
             .with(WEST, false)
             .with(WATERLOGGED, false)
+            .with(POST, false)
         );
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED);
+        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED, POST);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        tooltip.add(new TranslatableText("block.tooltip." + Wires.NAMESPACE + ".wires_pole")
+            .styled(style -> style.withColor(Formatting.DARK_GRAY)));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (player.isSneaking() &&
+            player.canModifyBlocks() &&
+            player.getStackInHand(hand).isOf(Items.STICK)) {
+            world.setBlockState(pos, state.with(POST, !state.get(POST)), NOTIFY_LISTENERS | FORCE_STATE);
+            return ActionResult.SUCCESS;
+        }
+        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Nullable
@@ -69,11 +105,13 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
             : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return VoxelShapes.empty();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
         if (stateFrom.isOf(this)) {

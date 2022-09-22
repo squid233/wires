@@ -2,8 +2,10 @@
   "itemGroup.wires.core": "Wires (Core)",
   "item.wires.wires_pole": "Wires Pole",
   "item.wires.wire": "Wire",
+  "item.wires.wire_remover": "Wire Remover",
   "item.wires.insulator": "Insulator",
-  "item.tooltip.wires.insulator.connecting": "Connecting: %d, %d, %d",
+  "item.tooltip.wires.selected": "Selected at: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
-  "block.wires.insulator": "Insulator"
+  "block.wires.insulator": "Insulator",
+  "block.tooltip.wires.wires_pole": "Sneak and use stick on block to toggle center post"
 }

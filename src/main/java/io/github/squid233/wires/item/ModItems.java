@@ -15,7 +15,9 @@ public final class ModItems {
     public static final BlockItem WIRES_POLE = register("wires_pole",
         new BlockItem(ModBlocks.WIRES_POLE, new Item.Settings().group(ModItemGroups.CORE)));
     public static final Item WIRE = register("wire",
-        new WireItem(new Item.Settings().group(ModItemGroups.CORE)));
+        new SelectorItem("connecting", new Item.Settings().group(ModItemGroups.CORE)));
+    public static final Item WIRE_REMOVER = register("wire_remover",
+        new SelectorItem("removing", new Item.Settings().group(ModItemGroups.CORE)));
     public static final BlockItem INSULATOR = register("insulator",
         new BlockItem(ModBlocks.INSULATOR, new Item.Settings().group(ModItemGroups.CORE)));
 

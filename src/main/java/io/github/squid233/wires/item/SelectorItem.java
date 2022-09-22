@@ -16,16 +16,19 @@ import java.util.List;
  * @author squid233
  * @since 0.1.0
  */
-public final class WireItem extends Item {
-    public WireItem(Settings settings) {
+public final class SelectorItem extends Item {
+    private final String subKey;
+
+    public SelectorItem(String subKey, Settings settings) {
         super(settings);
+        this.subKey = subKey;
     }
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        var sub = stack.getSubNbt("connecting");
+        var sub = stack.getSubNbt(subKey);
         if (sub != null) {
-            tooltip.add(new TranslatableText("item.tooltip." + Wires.NAMESPACE + ".insulator.connecting",
+            tooltip.add(new TranslatableText("item.tooltip." + Wires.NAMESPACE + ".selected",
                 sub.getInt("x"),
                 sub.getInt("y"),
                 sub.getInt("z"))

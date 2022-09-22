@@ -77,30 +77,61 @@ public final class InsulatorBlock extends FacingBlock implements BlockEntityProv
             return ActionResult.PASS;
         }
         var stack = player.getStackInHand(hand);
-        if (stack.isOf(ModItems.WIRE) && player.canModifyBlocks()) {
-            var sub = stack.getSubNbt("connecting");
-            if (sub == null) {
-                var tag = new NbtCompound();
-                tag.putInt("x", pos.getX());
-                tag.putInt("y", pos.getY());
-                tag.putInt("z", pos.getZ());
-                stack.setSubNbt("connecting", tag);
-            } else {
-                int x = sub.getInt("x");
-                int y = sub.getInt("y");
-                int z = sub.getInt("z");
-                if (x == pos.getX() &&
-                    y == pos.getY() &&
-                    z == pos.getZ()) {
-                    stack.removeSubNbt("connecting");
+        if (player.canModifyBlocks()) {
+            if (stack.isOf(ModItems.WIRE)) {
+                var sub = stack.getSubNbt("connecting");
+                if (sub == null) {
+                    var tag = new NbtCompound();
+                    tag.putInt("x", pos.getX());
+                    tag.putInt("y", pos.getY());
+                    tag.putInt("z", pos.getZ());
+                    stack.setSubNbt("connecting", tag);
                 } else {
-                    if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
-                        insulator.connect(x, y, z);
+                    int x = sub.getInt("x");
+                    int y = sub.getInt("y");
+                    int z = sub.getInt("z");
+                    if (x == pos.getX() &&
+                        y == pos.getY() &&
+                        z == pos.getZ()) {
+                        stack.removeSubNbt("connecting");
+                    } else {
+                        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
+                            insulator.connect(x, y, z);
+                        }
+                        stack.removeSubNbt("connecting");
                     }
-                    stack.removeSubNbt("connecting");
                 }
+                return ActionResult.SUCCESS;
             }
-            return ActionResult.SUCCESS;
+            if (stack.isOf(ModItems.WIRE_REMOVER)) {
+                var sub = stack.getSubNbt("removing");
+                if (sub == null) {
+                    var tag = new NbtCompound();
+                    tag.putInt("x", pos.getX());
+                    tag.putInt("y", pos.getY());
+                    tag.putInt("z", pos.getZ());
+                    stack.setSubNbt("removing", tag);
+                } else {
+                    int x = sub.getInt("x");
+                    int y = sub.getInt("y");
+                    int z = sub.getInt("z");
+                    if (x == pos.getX() &&
+                        y == pos.getY() &&
+                        z == pos.getZ()) {
+                        stack.removeSubNbt("removing");
+                    } else {
+                        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
+                            var bpos = new BlockPos(x, y, z);
+                            insulator.disconnect(-1, bpos);
+                            if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity other) {
+                                other.disconnect(-1, pos);
+                            }
+                        }
+                        stack.removeSubNbt("removing");
+                    }
+                }
+                return ActionResult.SUCCESS;
+            }
         }
         return super.onUse(state, world, pos, player, hand, hit);
     }

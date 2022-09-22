@@ -1,6 +1,7 @@
 package io.github.squid233.wires.block.entity;
 
 import io.github.squid233.wires.block.InsulatorBlock;
+import io.github.squid233.wires.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -27,6 +28,9 @@ public final class InsulatorBlockEntity extends BlockEntity {
 
     private BlockPos _connect(int targetX, int targetY, int targetZ) {
         var bpos = new BlockPos(targetX, targetY, targetZ);
+        if (connectedTo.contains(bpos)) {
+            return bpos;
+        }
         connectedTo.add(bpos);
         var state = getCachedState().with(InsulatorBlock.CONNECTED, true);
         setCachedState(state);
@@ -47,26 +51,33 @@ public final class InsulatorBlockEntity extends BlockEntity {
     @Override
     public void markRemoved() {
         super.markRemoved();
-        disconnect();
+        disconnectAll();
     }
 
-    private void _disconnect(BlockPos bpos) {
-        connectedTo.remove(bpos);
-        var state = getCachedState().with(InsulatorBlock.CONNECTED, false);
-        setCachedState(state);
-        if (world != null) {
-            world.setBlockState(pos, state);
+    public void disconnect(int index, BlockPos bpos) {
+        if (index < 0) {
+            connectedTo.remove(bpos);
+        } else {
+            connectedTo.remove(index);
+        }
+        if (connectedTo.isEmpty()) {
+            var state = getCachedState().with(InsulatorBlock.CONNECTED, false);
+            setCachedState(state);
+            if (world != null && state.isOf(ModBlocks.INSULATOR)) {
+                world.setBlockState(pos, state);
+            }
         }
         markDirty();
     }
 
-    public void disconnect() {
+    public void disconnectAll() {
         if (world != null) {
-            for (var bpos : connectedTo) {
+            for (int i = connectedTo.size() - 1; i >= 0; i--) {
+                var bpos = connectedTo.get(i);
                 if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
-                    insulator._disconnect(pos);
+                    insulator.disconnect(-1, pos);
                 }
-                _disconnect(bpos);
+                disconnect(i, bpos);
             }
         }
     }
