@@ -1,7 +1,6 @@
 package io.github.squid233.wires.block.entity;
 
 import io.github.squid233.wires.block.InsulatorBlock;
-import io.github.squid233.wires.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -26,10 +25,9 @@ public final class InsulatorBlockEntity extends BlockEntity {
         super(ModBlockEntities.INSULATOR, pos, state);
     }
 
-    private BlockPos _connect(int targetX, int targetY, int targetZ) {
-        var bpos = new BlockPos(targetX, targetY, targetZ);
+    private void _connect(BlockPos bpos) {
         if (connectedTo.contains(bpos)) {
-            return bpos;
+            return;
         }
         connectedTo.add(bpos);
         var state = getCachedState().with(InsulatorBlock.CONNECTED, true);
@@ -38,46 +36,46 @@ public final class InsulatorBlockEntity extends BlockEntity {
             world.setBlockState(pos, state);
         }
         markDirty();
-        return bpos;
     }
 
     public void connect(int targetX, int targetY, int targetZ) {
-        var bpos = _connect(targetX, targetY, targetZ);
+        var bpos = new BlockPos(targetX, targetY, targetZ);
         if (world != null && world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
-            insulator._connect(pos.getX(), pos.getY(), pos.getZ());
+            _connect(bpos);
+            insulator._connect(pos);
         }
     }
 
     @Override
     public void markRemoved() {
         super.markRemoved();
-        disconnectAll();
+        disconnectAll(removed);
     }
 
-    public void disconnect(int index, BlockPos bpos) {
+    public void disconnect(int index, BlockPos bpos, boolean removed) {
         if (index < 0) {
             connectedTo.remove(bpos);
         } else {
             connectedTo.remove(index);
         }
-        if (connectedTo.isEmpty()) {
+        if (connectedTo.isEmpty() && !removed) {
             var state = getCachedState().with(InsulatorBlock.CONNECTED, false);
             setCachedState(state);
-            if (world != null && state.isOf(ModBlocks.INSULATOR)) {
+            if (world != null) {
                 world.setBlockState(pos, state);
             }
         }
         markDirty();
     }
 
-    public void disconnectAll() {
+    public void disconnectAll(boolean removed) {
         if (world != null) {
             for (int i = connectedTo.size() - 1; i >= 0; i--) {
                 var bpos = connectedTo.get(i);
                 if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
-                    insulator.disconnect(-1, pos);
+                    insulator.disconnect(-1, pos, false);
                 }
-                disconnect(i, bpos);
+                disconnect(i, bpos, removed);
             }
         }
     }
@@ -99,13 +97,11 @@ public final class InsulatorBlockEntity extends BlockEntity {
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        if (nbt.contains("connectedTo")) {
-            var list = nbt.getList("connectedTo", NbtElement.COMPOUND_TYPE);
-            connectedTo.clear();
-            for (int i = 0, len = list.size(); i < len; i++) {
-                var c = list.getCompound(i);
-                connectedTo.add(posFromNbt(c));
-            }
+        var list = nbt.getList("connectedTo", NbtElement.COMPOUND_TYPE);
+        connectedTo.clear();
+        for (int i = 0, len = list.size(); i < len; i++) {
+            var c = list.getCompound(i);
+            connectedTo.add(posFromNbt(c));
         }
     }
 
@@ -118,7 +114,7 @@ public final class InsulatorBlockEntity extends BlockEntity {
             c.putInt("x", bpos.getX());
             c.putInt("y", bpos.getY());
             c.putInt("z", bpos.getZ());
-            list.add(c);
+            list.add(list.size(), c);
         }
         nbt.put("connectedTo", list);
     }

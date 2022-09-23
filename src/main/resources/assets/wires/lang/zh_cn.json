@@ -7,5 +7,5 @@
   "item.tooltip.wires.selected": "已选中: %d, %d, %d",
   "block.wires.wires_pole": "架线柱",
   "block.wires.insulator": "绝缘体",
-  "block.tooltip.wires.wires_pole": "潜行并对方块使用木棍以切换中心柱子"
+  "block.tooltip.wires.wires_pole": "对方块使用木棍以切换中心柱子"
 }

@@ -16,8 +16,8 @@ import java.util.List;
  * @author squid233
  * @since 0.1.0
  */
-public final class SelectorItem extends Item {
-    private final String subKey;
+public class SelectorItem extends Item {
+    protected final String subKey;
 
     public SelectorItem(String subKey, Settings settings) {
         super(settings);

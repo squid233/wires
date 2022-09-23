@@ -1,22 +1,15 @@
 package io.github.squid233.wires.block;
 
 import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
-import io.github.squid233.wires.item.ModItems;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -69,70 +62,5 @@ public final class InsulatorBlock extends FacingBlock implements BlockEntityProv
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new InsulatorBlockEntity(pos, state);
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (player.isSneaking()) {
-            return ActionResult.PASS;
-        }
-        var stack = player.getStackInHand(hand);
-        if (player.canModifyBlocks()) {
-            if (stack.isOf(ModItems.WIRE)) {
-                var sub = stack.getSubNbt("connecting");
-                if (sub == null) {
-                    var tag = new NbtCompound();
-                    tag.putInt("x", pos.getX());
-                    tag.putInt("y", pos.getY());
-                    tag.putInt("z", pos.getZ());
-                    stack.setSubNbt("connecting", tag);
-                } else {
-                    int x = sub.getInt("x");
-                    int y = sub.getInt("y");
-                    int z = sub.getInt("z");
-                    if (x == pos.getX() &&
-                        y == pos.getY() &&
-                        z == pos.getZ()) {
-                        stack.removeSubNbt("connecting");
-                    } else {
-                        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
-                            insulator.connect(x, y, z);
-                        }
-                        stack.removeSubNbt("connecting");
-                    }
-                }
-                return ActionResult.SUCCESS;
-            }
-            if (stack.isOf(ModItems.WIRE_REMOVER)) {
-                var sub = stack.getSubNbt("removing");
-                if (sub == null) {
-                    var tag = new NbtCompound();
-                    tag.putInt("x", pos.getX());
-                    tag.putInt("y", pos.getY());
-                    tag.putInt("z", pos.getZ());
-                    stack.setSubNbt("removing", tag);
-                } else {
-                    int x = sub.getInt("x");
-                    int y = sub.getInt("y");
-                    int z = sub.getInt("z");
-                    if (x == pos.getX() &&
-                        y == pos.getY() &&
-                        z == pos.getZ()) {
-                        stack.removeSubNbt("removing");
-                    } else {
-                        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
-                            var bpos = new BlockPos(x, y, z);
-                            insulator.disconnect(-1, bpos);
-                            if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity other) {
-                                other.disconnect(-1, pos);
-                            }
-                        }
-                        stack.removeSubNbt("removing");
-                    }
-                }
-                return ActionResult.SUCCESS;
-            }
-        }
-        return super.onUse(state, world, pos, player, hand, hit);
     }
 }

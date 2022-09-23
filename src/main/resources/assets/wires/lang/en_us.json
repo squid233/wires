@@ -7,5 +7,5 @@
   "item.tooltip.wires.selected": "Selected at: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
   "block.wires.insulator": "Insulator",
-  "block.tooltip.wires.wires_pole": "Sneak and use stick on block to toggle center post"
+  "block.tooltip.wires.wires_pole": "Use stick on block to toggle center post"
 }

@@ -61,13 +61,21 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (player.isSneaking() &&
-            player.canModifyBlocks() &&
-            player.getStackInHand(hand).isOf(Items.STICK)) {
-            world.setBlockState(pos, state.with(POST, !state.get(POST)), NOTIFY_LISTENERS | FORCE_STATE);
-            return ActionResult.SUCCESS;
+        if (!world.isClient && player != null) {
+            if (!useStick(player, state, world, pos, player.getStackInHand(hand))) {
+                return ActionResult.FAIL;
+            }
         }
-        return super.onUse(state, world, pos, player, hand, hit);
+        return ActionResult.success(world.isClient);
+    }
+
+    private boolean useStick(PlayerEntity player, BlockState state, World world, BlockPos pos, ItemStack stack) {
+        if (!player.canModifyBlocks() || !stack.isOf(Items.STICK)) {
+            return false;
+        }
+        boolean post = state.get(POST);
+        world.setBlockState(pos, state.with(POST, !post), NOTIFY_LISTENERS | FORCE_STATE);
+        return true;
     }
 
     @Nullable

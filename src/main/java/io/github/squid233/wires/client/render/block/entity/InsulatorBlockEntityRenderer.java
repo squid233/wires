@@ -21,8 +21,8 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
     @Override
     public void render(InsulatorBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var list = entity.getConnectedTo();
         if (entity.getCachedState().get(InsulatorBlock.CONNECTED)) {
+            var list = entity.getConnectedTo();
             for (var target : list) {
                 var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
                 matrices.push();
