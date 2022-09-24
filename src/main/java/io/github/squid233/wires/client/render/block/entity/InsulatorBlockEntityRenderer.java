@@ -23,20 +23,25 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.getCachedState().get(InsulatorBlock.CONNECTED)) {
             var list = entity.getConnectedTo();
+            var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
+            var pos = entity.getPos();
+            matrices.push();
+            matrices.translate(.5, .5, .5);
+            var entry = matrices.peek();
             for (var target : list) {
-                var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
-                matrices.push();
-                var pos = entity.getPos();
-                matrices.translate(.5, .5, .5);
-                var entry = matrices.peek();
                 float x = target.getX() - pos.getX();
                 float y = target.getY() - pos.getY();
                 float z = target.getZ() - pos.getZ();
                 renderLine(0f, 0f, 0f, buffer, entry);
                 renderLine(x, y, z, buffer, entry);
-                matrices.pop();
             }
+            matrices.pop();
         }
+    }
+
+    @Override
+    public int getRenderDistance() {
+        return 96;
     }
 
     private static void renderLine(float x, float y, float z,

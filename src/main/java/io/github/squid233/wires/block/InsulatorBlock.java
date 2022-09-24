@@ -3,20 +3,25 @@ package io.github.squid233.wires.block;
 import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author squid233
  * @since 0.1.0
  */
-public final class InsulatorBlock extends FacingBlock implements BlockEntityProvider {
+public final class InsulatorBlock extends BlockWithEntity {
+    public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty CONNECTED = BooleanProperty.of("connected");
 
     public InsulatorBlock(Settings settings) {
@@ -27,6 +32,11 @@ public final class InsulatorBlock extends FacingBlock implements BlockEntityProv
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, CONNECTED);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 
     @Nullable
@@ -62,5 +72,13 @@ public final class InsulatorBlock extends FacingBlock implements BlockEntityProv
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new InsulatorBlockEntity(pos, state);
+    }
+
+    @Override
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
+            insulator.disconnectAll();
+        }
+        super.onBreak(world, pos, state, player);
     }
 }

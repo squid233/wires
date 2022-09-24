@@ -1,5 +1,6 @@
 package io.github.squid233.wires.item;
 
+import io.github.squid233.wires.block.ModBlocks;
 import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
@@ -17,14 +18,17 @@ public final class WireRemoverItem extends SelectorItem {
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.shouldCancelInteraction()) return ActionResult.PASS;
+        var pos = context.getBlockPos();
         var world = context.getWorld();
+        if (context.shouldCancelInteraction() ||
+            !world.getBlockState(pos).isOf(ModBlocks.INSULATOR)) {
+            return ActionResult.PASS;
+        }
         if (world.isClient) {
             return ActionResult.SUCCESS;
         }
         var stack = context.getStack();
         var sub = stack.getSubNbt(subKey);
-        var pos = context.getBlockPos();
         if (sub == null) {
             var tag = new NbtCompound();
             tag.putInt("x", pos.getX());
@@ -42,9 +46,9 @@ public final class WireRemoverItem extends SelectorItem {
             } else {
                 if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
                     var bpos = new BlockPos(x, y, z);
-                    insulator.disconnect(-1, bpos, false);
+                    insulator.disconnect(bpos);
                     if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity other) {
-                        other.disconnect(-1, pos, false);
+                        other.disconnect(pos);
                     }
                 }
                 stack.removeSubNbt(subKey);
