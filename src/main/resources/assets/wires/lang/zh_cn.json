@@ -7,5 +7,6 @@
   "item.tooltip.wires.selected": "已选中: %d, %d, %d",
   "block.wires.wires_pole": "架线柱",
   "block.wires.insulator": "绝缘体",
-  "block.tooltip.wires.wires_pole": "对方块使用木棍以切换中心柱子"
+  "block.tooltip.wires.toggle": "对方块使用木棍以切换方块状态",
+  "block.tooltip.wires.insulator": "使用 /data 命令修改渲染偏移"
 }

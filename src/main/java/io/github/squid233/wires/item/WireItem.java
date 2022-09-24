@@ -1,6 +1,6 @@
 package io.github.squid233.wires.item;
 
-import io.github.squid233.wires.block.ModBlocks;
+import io.github.squid233.wires.block.InsulatorBlock;
 import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
@@ -20,7 +20,7 @@ public final class WireItem extends SelectorItem {
         var pos = context.getBlockPos();
         var world = context.getWorld();
         if (context.shouldCancelInteraction() ||
-            !world.getBlockState(pos).isOf(ModBlocks.INSULATOR)) {
+            !(world.getBlockState(pos).getBlock() instanceof InsulatorBlock)) {
             return ActionResult.PASS;
         }
         if (world.isClient) {

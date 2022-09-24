@@ -25,15 +25,20 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
             var list = entity.getConnectedTo();
             var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
             var pos = entity.getPos();
+            var offset = entity.getRenderOffset();
+            var world = entity.getWorld();
             matrices.push();
-            matrices.translate(.5, .5, .5);
+            matrices.translate(offset.getX(), offset.getY(), offset.getZ());
             var entry = matrices.peek();
             for (var target : list) {
-                float x = target.getX() - pos.getX();
-                float y = target.getY() - pos.getY();
-                float z = target.getZ() - pos.getZ();
-                renderLine(0f, 0f, 0f, buffer, entry);
-                renderLine(x, y, z, buffer, entry);
+                if (world != null && world.getBlockEntity(target) instanceof InsulatorBlockEntity insulator) {
+                    var targetO = insulator.getRenderOffset();
+                    float x = target.getX() - pos.getX() - (float) offset.getX() + (float) targetO.getX();
+                    float y = target.getY() - pos.getY() - (float) offset.getY() + (float) targetO.getY();
+                    float z = target.getZ() - pos.getZ() - (float) offset.getZ() + (float) targetO.getZ();
+                    renderLine(0f, 0f, 0f, buffer, entry);
+                    renderLine(x, y, z, buffer, entry);
+                }
             }
             matrices.pop();
         }

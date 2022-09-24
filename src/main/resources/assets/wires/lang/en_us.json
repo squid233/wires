@@ -7,5 +7,6 @@
   "item.tooltip.wires.selected": "Selected at: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
   "block.wires.insulator": "Insulator",
-  "block.tooltip.wires.wires_pole": "Use stick on block to toggle center post"
+  "block.tooltip.wires.toggle": "Use stick on block to toggle block states",
+  "block.tooltip.wires.insulator": "Use command /data to modify render offset"
 }

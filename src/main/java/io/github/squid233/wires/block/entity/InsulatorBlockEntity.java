@@ -1,6 +1,7 @@
 package io.github.squid233.wires.block.entity;
 
 import io.github.squid233.wires.block.InsulatorBlock;
+import io.github.squid233.wires.util.MutableVec3d;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -21,6 +22,7 @@ import java.util.Set;
  */
 public final class InsulatorBlockEntity extends BlockEntity {
     private final Set<BlockPos> connectedTo = new HashSet<>();
+    private final MutableVec3d renderOffset = new MutableVec3d(.5, .5, .5);
 
     public InsulatorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.INSULATOR, pos, state);
@@ -81,6 +83,10 @@ public final class InsulatorBlockEntity extends BlockEntity {
         return connectedTo;
     }
 
+    public MutableVec3d getRenderOffset() {
+        return renderOffset;
+    }
+
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
@@ -94,6 +100,10 @@ public final class InsulatorBlockEntity extends BlockEntity {
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
+        if (nbt.contains("renderOffset", NbtElement.COMPOUND_TYPE)) {
+            var c = nbt.getCompound("renderOffset");
+            renderOffset.set(c.getDouble("x"), c.getDouble("y"), c.getDouble("z"));
+        }
         connectedTo.clear();
         var list = nbt.getList("connectedTo", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < list.size(); i++) {
@@ -105,6 +115,11 @@ public final class InsulatorBlockEntity extends BlockEntity {
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
+        var ro = new NbtCompound();
+        ro.putDouble("x", renderOffset.getX());
+        ro.putDouble("y", renderOffset.getY());
+        ro.putDouble("z", renderOffset.getZ());
+        nbt.put("renderOffset", ro);
         var list = new NbtList();
         for (var bpos : connectedTo) {
             var c = new NbtCompound();

@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -54,7 +53,7 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        tooltip.add(new TranslatableText("block.tooltip." + Wires.NAMESPACE + ".wires_pole")
+        tooltip.add(new TranslatableText("block.tooltip." + Wires.NAMESPACE + ".toggle")
             .styled(style -> style.withColor(Formatting.DARK_GRAY)));
     }
 
@@ -127,9 +126,7 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     }
 
     public static boolean connectsTo(BlockState state, boolean solidFullSquare) {
-        return !cannotConnect(state) && solidFullSquare ||
-               state.getBlock() instanceof WiresPoleBlock ||
-               state.getBlock() instanceof PaneBlock ||
-               state.isIn(BlockTags.WALLS);
+        return ((PaneBlock) Blocks.GLASS_PANE).connectsTo(state, solidFullSquare) ||
+               state.getBlock() instanceof WiresPoleBlock;
     }
 }
