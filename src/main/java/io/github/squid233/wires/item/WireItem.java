@@ -38,16 +38,14 @@ public final class WireItem extends SelectorItem {
             int x = sub.getInt("x");
             int y = sub.getInt("y");
             int z = sub.getInt("z");
-            if (x == pos.getX() &&
-                y == pos.getY() &&
-                z == pos.getZ()) {
-                stack.removeSubNbt(subKey);
-            } else {
+            if (x != pos.getX() ||
+                y != pos.getY() ||
+                z != pos.getZ()) {
                 if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
                     insulator.connect(x, y, z);
                 }
-                stack.removeSubNbt(subKey);
             }
+            stack.removeSubNbt(subKey);
         }
         return ActionResult.CONSUME;
     }

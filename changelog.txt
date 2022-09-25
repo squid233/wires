@@ -1,6 +1,7 @@
 0.2.0
 Added: Invisible insulator
 Added: Insulator wire render offset
+Changed: Wire sagging
 Fixed: Crash on 1.18.1
 
 0.1.0

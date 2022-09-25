@@ -39,11 +39,9 @@ public final class WireRemoverItem extends SelectorItem {
             int x = sub.getInt("x");
             int y = sub.getInt("y");
             int z = sub.getInt("z");
-            if (x == pos.getX() &&
-                y == pos.getY() &&
-                z == pos.getZ()) {
-                stack.removeSubNbt(subKey);
-            } else {
+            if (x != pos.getX() ||
+                y != pos.getY() ||
+                z != pos.getZ()) {
                 if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
                     var bpos = new BlockPos(x, y, z);
                     insulator.disconnect(bpos);
@@ -51,8 +49,8 @@ public final class WireRemoverItem extends SelectorItem {
                         other.disconnect(pos);
                     }
                 }
-                stack.removeSubNbt(subKey);
             }
+            stack.removeSubNbt(subKey);
         }
         return ActionResult.CONSUME;
     }
