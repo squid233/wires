@@ -1,11 +1,13 @@
 {
   "itemGroup.wires.core": "线缆 (核心)",
   "item.wires.wires_pole": "架线柱",
+  "item.wires.hanging_wires_pole": "悬空架线柱",
   "item.wires.wire": "线缆",
   "item.wires.wire_remover": "线缆移除器",
   "item.wires.insulator": "绝缘体",
   "item.tooltip.wires.selected": "已选中: %d, %d, %d",
   "block.wires.wires_pole": "架线柱",
+  "block.wires.hanging_wires_pole": "悬空架线柱",
   "block.wires.insulator": "绝缘体",
   "block.tooltip.wires.toggle": "对方块使用木棍以切换方块状态",
   "block.tooltip.wires.insulator": "使用 /data 命令修改渲染偏移"

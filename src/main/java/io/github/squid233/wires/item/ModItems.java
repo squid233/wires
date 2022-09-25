@@ -13,13 +13,19 @@ import net.minecraft.util.registry.Registry;
  */
 public final class ModItems {
     public static final BlockItem WIRES_POLE = register("wires_pole",
-        new BlockItem(ModBlocks.WIRES_POLE, new Item.Settings().group(ModItemGroups.CORE)));
+        new BlockItem(ModBlocks.WIRES_POLE, core()));
+    public static final BlockItem HANGING_WIRES_POLE = register("hanging_wires_pole",
+        new BlockItem(ModBlocks.HANGING_WIRES_POLE, core()));
     public static final Item WIRE = register("wire",
-        new WireItem("connecting", new Item.Settings().group(ModItemGroups.CORE).maxCount(1)));
+        new WireItem("connecting", core().maxCount(1)));
     public static final Item WIRE_REMOVER = register("wire_remover",
-        new WireRemoverItem("removing", new Item.Settings().group(ModItemGroups.CORE).maxCount(1)));
+        new WireRemoverItem("removing", core().maxCount(1)));
     public static final BlockItem INSULATOR = register("insulator",
-        new BlockItem(ModBlocks.INSULATOR, new Item.Settings().group(ModItemGroups.CORE)));
+        new BlockItem(ModBlocks.INSULATOR, core()));
+
+    private static Item.Settings core() {
+        return new Item.Settings().group(ModItemGroups.CORE);
+    }
 
     private static <T extends Item> T register(String name, T item) {
         return Registry.register(Registry.ITEM, new Identifier(Wires.NAMESPACE, name), item);

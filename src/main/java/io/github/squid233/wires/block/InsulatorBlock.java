@@ -59,6 +59,7 @@ public final class InsulatorBlock extends BlockWithEntity {
             .styled(style -> style.withColor(Formatting.DARK_GRAY)));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var stack = player.getStackInHand(hand);
@@ -82,6 +83,7 @@ public final class InsulatorBlock extends BlockWithEntity {
         return getDefaultState().with(FACING, ctx.getSide().getOpposite());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return switch (state.get(FACING)) {
@@ -94,6 +96,7 @@ public final class InsulatorBlock extends BlockWithEntity {
         };
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         if (state.get(INVISIBLE)) {

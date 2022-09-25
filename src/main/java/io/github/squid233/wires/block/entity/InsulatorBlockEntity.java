@@ -12,6 +12,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +29,7 @@ public final class InsulatorBlockEntity extends BlockEntity {
         super(ModBlockEntities.INSULATOR, pos, state);
     }
 
+    @SuppressWarnings("deprecation")
     private void _connect(BlockPos bpos) {
         connectedTo.add(bpos);
         var oldState = getCachedState();
@@ -47,6 +49,7 @@ public final class InsulatorBlockEntity extends BlockEntity {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void disconnect(BlockPos bpos) {
         connectedTo.remove(bpos);
         var oldState = getCachedState();
@@ -60,12 +63,16 @@ public final class InsulatorBlockEntity extends BlockEntity {
         updateListeners(oldState);
     }
 
+    private void disconnectTarget(World world, BlockPos bpos) {
+        if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
+            insulator.disconnect(pos);
+        }
+    }
+
     public void disconnectAll() {
         if (world != null) {
             for (var bpos : connectedTo) {
-                if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
-                    insulator.disconnect(pos);
-                }
+                disconnectTarget(world, bpos);
             }
             connectedTo.clear();
             updateListeners(getCachedState());

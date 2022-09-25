@@ -16,6 +16,8 @@ import net.minecraft.util.registry.Registry;
 public final class ModBlocks {
     public static final Block WIRES_POLE = register("wires_pole",
         new WiresPoleBlock(AbstractBlock.Settings.copy(Blocks.COBBLESTONE_WALL)));
+    public static final Block HANGING_WIRES_POLE = register("hanging_wires_pole",
+        new HangingWiresPoleBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)));
     public static final Block INSULATOR = register("insulator",
         new InsulatorBlock(AbstractBlock.Settings.of(Material.METAL).strength(5f, 6f).sounds(BlockSoundGroup.METAL)));
 

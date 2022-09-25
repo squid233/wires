@@ -1,3 +1,9 @@
+0.3.0
+Added: Wire sagging option
+Added: Configuration command
+Added: Hanging wires pole
+Fixed: Wires pole model
+
 0.2.0
 Added: Invisible insulator
 Added: Insulator wire render offset

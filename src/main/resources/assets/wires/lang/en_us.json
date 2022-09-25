@@ -1,11 +1,13 @@
 {
   "itemGroup.wires.core": "Wires (Core)",
   "item.wires.wires_pole": "Wires Pole",
+  "item.wires.hanging_wires_pole": "Hanging Wires Pole",
   "item.wires.wire": "Wire",
   "item.wires.wire_remover": "Wire Remover",
   "item.wires.insulator": "Insulator",
   "item.tooltip.wires.selected": "Selected at: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
+  "block.wires.hanging_wires_pole": "Hanging Wires Pole",
   "block.wires.insulator": "Insulator",
   "block.tooltip.wires.toggle": "Use stick on block to toggle block states",
   "block.tooltip.wires.insulator": "Use command /data to modify render offset"
