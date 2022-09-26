@@ -17,15 +17,6 @@ public final class ModOptions {
     private static final Logger logger = LoggerFactory.getLogger(ModOptions.class);
     private static final File file = new File("config/wires.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private boolean sagging = true;
-
-    public boolean isSagging() {
-        return sagging;
-    }
-
-    public void setSagging(boolean sagging) {
-        this.sagging = sagging;
-    }
 
     public boolean fileExists() {
         return file.exists();
@@ -34,7 +25,6 @@ public final class ModOptions {
     public void load() {
         try (var r = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             var opt = gson.fromJson(r, ModOptions.class);
-            sagging = opt.sagging;
         } catch (Exception e) {
             logger.error("Error loading " + Wires.NAMESPACE + " options", e);
         }

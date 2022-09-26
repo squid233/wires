@@ -14,8 +14,8 @@ import net.minecraft.util.registry.Registry;
 public final class ModItems {
     public static final BlockItem WIRES_POLE = register("wires_pole",
         new BlockItem(ModBlocks.WIRES_POLE, core()));
-    public static final BlockItem HANGING_WIRES_POLE = register("hanging_wires_pole",
-        new BlockItem(ModBlocks.HANGING_WIRES_POLE, core()));
+    public static final BlockItem IRON_HANGING_WIRES_POLE = register("iron_hanging_wires_pole",
+        new BlockItem(ModBlocks.IRON_HANGING_WIRES_POLE, core()));
     public static final Item WIRE = register("wire",
         new WireItem("connecting", core().maxCount(1)));
     public static final Item WIRE_REMOVER = register("wire_remover",

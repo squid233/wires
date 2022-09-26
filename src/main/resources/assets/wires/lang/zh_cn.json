@@ -7,8 +7,9 @@
   "item.wires.insulator": "绝缘体",
   "item.tooltip.wires.selected": "已选中: %d, %d, %d",
   "block.wires.wires_pole": "架线柱",
-  "block.wires.hanging_wires_pole": "悬空架线柱",
+  "block.wires.iron_hanging_wires_pole": "铁悬空架线柱",
   "block.wires.insulator": "绝缘体",
   "block.tooltip.wires.toggle": "对方块使用木棍以切换方块状态",
-  "block.tooltip.wires.insulator": "使用 /data 命令修改渲染偏移"
+  "block.tooltip.wires.insulator": "使用 /data 命令修改渲染偏移",
+  "command.wires.error.render_offset": "无法设置渲染偏移; 可能不在创造模式下执行或目标不存在"
 }

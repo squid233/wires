@@ -7,8 +7,9 @@
   "item.wires.insulator": "Insulator",
   "item.tooltip.wires.selected": "Selected at: %d, %d, %d",
   "block.wires.wires_pole": "Wires Pole",
-  "block.wires.hanging_wires_pole": "Hanging Wires Pole",
+  "block.wires.iron_hanging_wires_pole": "Iron Hanging Wires Pole",
   "block.wires.insulator": "Insulator",
   "block.tooltip.wires.toggle": "Use stick on block to toggle block states",
-  "block.tooltip.wires.insulator": "Use command /data to modify render offset"
+  "block.tooltip.wires.insulator": "Use command /data to modify render offset",
+  "command.wires.error.render_offset": "Unable to set render offset; maybe you are not in creative mode or the target is not exist"
 }

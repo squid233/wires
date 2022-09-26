@@ -12,6 +12,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -77,6 +78,15 @@ public final class InsulatorBlockEntity extends BlockEntity {
             connectedTo.clear();
             updateListeners(getCachedState());
         }
+    }
+
+    public void setRenderOffset(double x, double y, double z) {
+        renderOffset.set(x, y, z);
+        updateListeners(getCachedState());
+    }
+
+    public void setRenderOffset(Position offset) {
+        setRenderOffset(offset.getX(), offset.getY(), offset.getZ());
     }
 
     private void updateListeners(BlockState oldState) {

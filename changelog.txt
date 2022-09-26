@@ -1,6 +1,6 @@
 0.3.0
-Added: Wire sagging option
 Added: Configuration command
+Added: Render offset command
 Added: Hanging wires pole
 Fixed: Wires pole model
 

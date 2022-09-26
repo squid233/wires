@@ -1,13 +1,18 @@
 package io.github.squid233.wires;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import io.github.squid233.wires.block.ModBlocks;
+import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
 import io.github.squid233.wires.block.entity.ModBlockEntities;
 import io.github.squid233.wires.client.WiresClient;
 import io.github.squid233.wires.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.PosArgument;
+import net.minecraft.command.argument.Vec3ArgumentType;
+import net.minecraft.text.TranslatableText;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -29,13 +34,25 @@ public final class Wires implements ModInitializer {
                 if (!dedicated) {
                     dispatcher.register(
                         literal(NAMESPACE).then(
-                            literal("sagging").then(
-                                argument("sagging", BoolArgumentType.bool()).executes(context -> {
-                                    boolean sagging = context.getArgument("sagging", boolean.class);
-                                    WiresClient.options.setSagging(sagging);
-                                    WiresClient.options.save();
-                                    return Command.SINGLE_SUCCESS;
-                                })
+                            literal("renderoffset").then(
+                                argument("pos", BlockPosArgumentType.blockPos()).then(
+                                    argument("offset", Vec3ArgumentType.vec3(false)).executes(context -> {
+                                        var src = context.getSource();
+                                        var player = src.getPlayer();
+                                        var world = src.getWorld();
+                                        var pos = context.getArgument("pos", PosArgument.class)
+                                            .toAbsoluteBlockPos(src);
+                                        if (player.isCreative() &&
+                                            world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
+                                            insulator.setRenderOffset(context.getArgument("offset", PosArgument.class)
+                                                .toAbsolutePos(src.withPosition(insulator.getRenderOffset().toImmutable())));
+                                            return Command.SINGLE_SUCCESS;
+                                        }
+                                        throw new DynamicCommandExceptionType(o ->
+                                            new TranslatableText("command." + NAMESPACE + ".error.render_offset", o))
+                                            .create(pos);
+                                    })
+                                )
                             )
                         )
                     );

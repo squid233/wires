@@ -59,7 +59,7 @@ public final class HangingWiresPoleBlock extends Block implements Waterloggable 
 
     @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return switch (state.get(HORIZONTAL_AXIS)) {
             case X -> createCuboidShape(7, 0, 0, 9, 16, 16);
             case Z -> createCuboidShape(0, 0, 7, 16, 16, 9);

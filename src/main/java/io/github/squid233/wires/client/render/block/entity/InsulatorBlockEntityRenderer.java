@@ -2,7 +2,6 @@ package io.github.squid233.wires.client.render.block.entity;
 
 import io.github.squid233.wires.block.InsulatorBlock;
 import io.github.squid233.wires.block.entity.InsulatorBlockEntity;
-import io.github.squid233.wires.client.WiresClient;
 import io.github.squid233.wires.util.MutableVec3d;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -38,40 +37,45 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
             matrices.push();
             matrices.translate(offset.getX(), offset.getY(), offset.getZ());
             var entry = matrices.peek();
-            boolean sag = WiresClient.options.isSagging();
             for (var target : list) {
-                render(world, target, pos, offset, sag, buffer, entry);
+                render(world, target, pos, offset, buffer, entry);
             }
             matrices.pop();
         }
     }
 
     private static void render(World world, BlockPos target, BlockPos pos,
-                               MutableVec3d offset, boolean sag, VertexConsumer buffer, MatrixStack.Entry entry) {
+                               MutableVec3d offset, VertexConsumer buffer, MatrixStack.Entry entry) {
         if (world != null && world.getBlockEntity(target) instanceof InsulatorBlockEntity insulator) {
             var targetO = insulator.getRenderOffset();
             float x = target.getX() - pos.getX() - (float) offset.getX() + (float) targetO.getX();
             float y = target.getY() - pos.getY() - (float) offset.getY() + (float) targetO.getY();
             float z = target.getZ() - pos.getZ() - (float) offset.getZ() + (float) targetO.getZ();
-            if (sag) {
-                float x1, y1, z1;
-                for (int i = 0; i < SEGMENTS; i++) {
-                    x1 = lerp(x, i + 1, SEGMENTS);
-                    y1 = lerp(y, i + 1, SEGMENTS);
-                    z1 = lerp(z, i + 1, SEGMENTS);
-                    renderLine(i,
-                        lerp(x, i, SEGMENTS), lerp(y, i, SEGMENTS), lerp(z, i, SEGMENTS),
-                        x1, y1, z1,
-                        buffer, entry);
-                    renderLine(i + 1,
-                        x1, y1, z1,
-                        lerp(x, i + 2, SEGMENTS), lerp(y, i + 2, SEGMENTS), lerp(z, i + 2, SEGMENTS),
-                        buffer, entry);
-                }
-            } else {
-                renderLine(0f, 0f, 0f, buffer, entry);
-                renderLine(x, y, z, buffer, entry);
+            float x0, y0, z0;
+            float x1, y1, z1;
+            for (int i = 0; i < SEGMENTS; i++) {
+                x0 = lerp(x, i, SEGMENTS);
+                y0 = lerp(y, i, SEGMENTS);
+                z0 = lerp(z, i, SEGMENTS);
+                x1 = lerp(x, i + 1, SEGMENTS);
+                y1 = lerp(y, i + 1, SEGMENTS);
+                z1 = lerp(z, i + 1, SEGMENTS);
+                renderLine(i,
+                    x0, y0, z0,
+                    x1, y1, z1,
+                    buffer, entry);
+                renderLine(i + 1,
+                    x1, y1, z1,
+                    lerp(x, i + 2, SEGMENTS), lerp(y, i + 2, SEGMENTS), lerp(z, i + 2, SEGMENTS),
+                    buffer, entry);
+                renderLine(i,
+                    x0, y0, z0,
+                    x0, y0 - 1f, z0,
+                    buffer, entry);
+                renderLineInv(x0, y0, z0, x0, y0 - 1f, z0, buffer, entry);
             }
+            renderLine(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
+            renderLineInv(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
         }
     }
 
@@ -94,6 +98,29 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
                                    VertexConsumer buffer, MatrixStack.Entry matrices) {
         y0 += offsetY((double) seg / (double) SEGMENTS) - OFFSET;
         y1 += offsetY((double) (seg + 1) / (double) SEGMENTS) - OFFSET;
+        renderLine(x0, y0, z0, x1, y1, z1, buffer, matrices);
+    }
+
+    private static void renderLineInv(float x0, float y0, float z0,
+                                      float x1, float y1, float z1,
+                                      VertexConsumer buffer, MatrixStack.Entry matrices) {
+        float nx = x1 - x0;
+        float ny = y1 - y0;
+        float nz = z1 - z0;
+        float mag = MathHelper.sqrt(nx * nx + ny * ny + nz * nz);
+        // Normalize
+        nx /= mag;
+        ny /= mag;
+        nz /= mag;
+        buffer.vertex(matrices.getPositionMatrix(), x1, y1, z1)
+            .color(0, 0, 0, 255)
+            .normal(matrices.getNormalMatrix(), nx, ny, nz)
+            .next();
+    }
+
+    private static void renderLine(float x0, float y0, float z0,
+                                   float x1, float y1, float z1,
+                                   VertexConsumer buffer, MatrixStack.Entry matrices) {
         float nx = x1 - x0;
         float ny = y1 - y0;
         float nz = z1 - z0;
@@ -103,22 +130,6 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         ny /= mag;
         nz /= mag;
         buffer.vertex(matrices.getPositionMatrix(), x0, y0, z0)
-            .color(0, 0, 0, 255)
-            .normal(matrices.getNormalMatrix(), nx, ny, nz)
-            .next();
-    }
-
-    private static void renderLine(float x, float y, float z,
-                                   VertexConsumer buffer, MatrixStack.Entry matrices) {
-        float nx = x;
-        float ny = y;
-        float nz = z;
-        float mag = MathHelper.sqrt(nx * nx + ny * ny + nz * nz);
-        // Normalize
-        nx /= mag;
-        ny /= mag;
-        nz /= mag;
-        buffer.vertex(matrices.getPositionMatrix(), x, y, z)
             .color(0, 0, 0, 255)
             .normal(matrices.getNormalMatrix(), nx, ny, nz)
             .next();
