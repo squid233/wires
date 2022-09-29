@@ -1,6 +1,6 @@
 {
   "parent": "wires:block/template_wires_pole_cap",
   "textures": {
-    "wall": "minecraft:block/stone"
+    "wall": "minecraft:block/iron_block"
   }
 }

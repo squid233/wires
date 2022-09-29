@@ -19,7 +19,10 @@ import net.minecraft.world.World;
  */
 public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<InsulatorBlockEntity> {
     private static final int SEGMENTS = 8;
+    private static final double SEGMENTS_inv = 1.0 / (double) SEGMENTS;
+    private static final float SEGMENTS_invf = 1.0f / (float) SEGMENTS;
     private static final double C = 2.0;
+    private static final double C_inv = 1.0 / C;
     private static final double OFFSET = offsetY(0.0);
 
     public InsulatorBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
@@ -54,19 +57,19 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
             float x0, y0, z0;
             float x1, y1, z1;
             for (int i = 0; i < SEGMENTS; i++) {
-                x0 = lerp(x, i, SEGMENTS);
-                y0 = lerp(y, i, SEGMENTS);
-                z0 = lerp(z, i, SEGMENTS);
-                x1 = lerp(x, i + 1, SEGMENTS);
-                y1 = lerp(y, i + 1, SEGMENTS);
-                z1 = lerp(z, i + 1, SEGMENTS);
+                x0 = lerp(x, i);
+                y0 = lerp(y, i);
+                z0 = lerp(z, i);
+                x1 = lerp(x, i + 1);
+                y1 = lerp(y, i + 1);
+                z1 = lerp(z, i + 1);
                 renderLine(i,
                     x0, y0, z0,
                     x1, y1, z1,
                     buffer, entry);
                 renderLine(i + 1,
                     x1, y1, z1,
-                    lerp(x, i + 2, SEGMENTS), lerp(y, i + 2, SEGMENTS), lerp(z, i + 2, SEGMENTS),
+                    lerp(x, i + 2), lerp(y, i + 2), lerp(z, i + 2),
                     buffer, entry);
                 renderLine(i,
                     x0, y0, z0,
@@ -79,12 +82,12 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         }
     }
 
-    private static float lerp(float end, int v, int max) {
-        return end * (float) v / (float) max;
+    private static float lerp(float end, int v) {
+        return end * (float) v * SEGMENTS_invf;
     }
 
     private static double offsetY(double x) {
-        return C * Math.cosh((2 * x - 1.0) / C) - C;
+        return C * Math.cosh((2 * x - 1.0) * C_inv) - C;
     }
 
     @Override
@@ -96,8 +99,8 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
                                    float x0, float y0, float z0,
                                    float x1, float y1, float z1,
                                    VertexConsumer buffer, MatrixStack.Entry matrices) {
-        y0 += offsetY((double) seg / (double) SEGMENTS) - OFFSET;
-        y1 += offsetY((double) (seg + 1) / (double) SEGMENTS) - OFFSET;
+        y0 += offsetY((double) seg * SEGMENTS_inv) - OFFSET;
+        y1 += offsetY((double) (seg + 1) * SEGMENTS_inv) - OFFSET;
         renderLine(x0, y0, z0, x1, y1, z1, buffer, matrices);
     }
 

@@ -24,6 +24,7 @@ public final class WiresClient implements ClientModInitializer {
         }
         options.save();
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WIRES_POLE, RenderLayer.getCutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.IRON_WIRES_POLE, RenderLayer.getCutoutMipped());
         BlockEntityRendererRegistry.register(ModBlockEntities.INSULATOR, InsulatorBlockEntityRenderer::new);
     }
 }

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wires:wires_pole"
+    "wires:wires_pole",
+    "wires:iron_wires_pole"
   ]
 }
