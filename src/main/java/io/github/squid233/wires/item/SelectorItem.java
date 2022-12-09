@@ -5,7 +5,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ public class SelectorItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         var sub = stack.getSubNbt(subKey);
         if (sub != null) {
-            tooltip.add(new TranslatableText("item.tooltip." + Wires.NAMESPACE + ".selected",
+            tooltip.add(Text.translatable("item.tooltip." + Wires.NAMESPACE + ".selected",
                 sub.getInt("x"),
                 sub.getInt("y"),
                 sub.getInt("z"))
