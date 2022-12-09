@@ -8,11 +8,11 @@ import io.github.squid233.wires.block.entity.ModBlockEntities;
 import io.github.squid233.wires.client.WiresClient;
 import io.github.squid233.wires.item.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.PosArgument;
 import net.minecraft.command.argument.Vec3ArgumentType;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -30,8 +30,8 @@ public final class Wires implements ModInitializer {
         ModBlockEntities.register();
         ModItems.register();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                if (!dedicated) {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+                if (environment.integrated) {
                     dispatcher.register(
                         literal(NAMESPACE).then(
                             literal("renderoffset").then(
@@ -42,14 +42,14 @@ public final class Wires implements ModInitializer {
                                         var world = src.getWorld();
                                         var pos = context.getArgument("pos", PosArgument.class)
                                             .toAbsoluteBlockPos(src);
-                                        if (player.isCreative() &&
+                                        if (player != null && player.isCreative() &&
                                             world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
                                             insulator.setRenderOffset(context.getArgument("offset", PosArgument.class)
                                                 .toAbsolutePos(src.withPosition(insulator.getRenderOffset().toImmutable())));
                                             return Command.SINGLE_SUCCESS;
                                         }
                                         throw new DynamicCommandExceptionType(o ->
-                                            new TranslatableText("command." + NAMESPACE + ".error.render_offset", o))
+                                            Text.translatable("command." + NAMESPACE + ".error.render_offset", o))
                                             .create(pos);
                                     })
                                 )
