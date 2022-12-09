@@ -14,7 +14,6 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -53,9 +52,9 @@ public final class InsulatorBlock extends BlockWithEntity {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        tooltip.add(new TranslatableText("block.tooltip." + Wires.NAMESPACE + ".toggle")
+        tooltip.add(Text.translatable("block.tooltip." + Wires.NAMESPACE + ".toggle")
             .styled(style -> style.withColor(Formatting.DARK_GRAY)));
-        tooltip.add(new TranslatableText("block.tooltip." + Wires.NAMESPACE + ".insulator")
+        tooltip.add(Text.translatable("block.tooltip." + Wires.NAMESPACE + ".insulator")
             .styled(style -> style.withColor(Formatting.DARK_GRAY)));
     }
 
