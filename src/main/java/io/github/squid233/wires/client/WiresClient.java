@@ -6,7 +6,7 @@ import io.github.squid233.wires.block.entity.ModBlockEntities;
 import io.github.squid233.wires.util.ModOptions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
 
 /**
@@ -25,6 +25,6 @@ public final class WiresClient implements ClientModInitializer {
         options.save();
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WIRES_POLE, RenderLayer.getCutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.IRON_WIRES_POLE, RenderLayer.getCutoutMipped());
-        BlockEntityRendererRegistry.register(ModBlockEntities.INSULATOR, InsulatorBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.INSTANCE.register(ModBlockEntities.INSULATOR, InsulatorBlockEntityRenderer::new);
     }
 }
