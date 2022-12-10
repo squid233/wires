@@ -13,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import java.util.Set;
+
 /**
  * @author squid233
  * @since 0.1.0
@@ -33,15 +35,15 @@ public final class InsulatorBlockEntityRenderer extends BlockEntityRenderer<Insu
     public void render(InsulatorBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.getCachedState().get(InsulatorBlock.CONNECTED)) {
-            var list = entity.getConnectedTo();
-            var buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
-            var pos = entity.getPos();
-            var offset = entity.getRenderOffset();
-            var world = entity.getWorld();
+            Set<BlockPos> list = entity.getConnectedTo();
+            VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getLines());
+            BlockPos pos = entity.getPos();
+            MutableVec3d offset = entity.getRenderOffset();
+            World world = entity.getWorld();
             matrices.push();
             matrices.translate(offset.getX(), offset.getY(), offset.getZ());
-            var entry = matrices.peek();
-            for (var target : list) {
+            MatrixStack.Entry entry = matrices.peek();
+            for (BlockPos target : list) {
                 render(world, target, pos, offset, buffer, entry);
             }
             matrices.pop();
@@ -50,36 +52,40 @@ public final class InsulatorBlockEntityRenderer extends BlockEntityRenderer<Insu
 
     private static void render(World world, BlockPos target, BlockPos pos,
                                MutableVec3d offset, VertexConsumer buffer, MatrixStack.Entry entry) {
-        if (world != null && world.getBlockEntity(target) instanceof InsulatorBlockEntity insulator) {
-            var targetO = insulator.getRenderOffset();
-            float x = target.getX() - pos.getX() - (float) offset.getX() + (float) targetO.getX();
-            float y = target.getY() - pos.getY() - (float) offset.getY() + (float) targetO.getY();
-            float z = target.getZ() - pos.getZ() - (float) offset.getZ() + (float) targetO.getZ();
-            float x0, y0, z0;
-            float x1, y1, z1;
-            for (int i = 0; i < SEGMENTS; i++) {
-                x0 = lerp(x, i);
-                y0 = lerp(y, i);
-                z0 = lerp(z, i);
-                x1 = lerp(x, i + 1);
-                y1 = lerp(y, i + 1);
-                z1 = lerp(z, i + 1);
-                renderLine(i,
-                    x0, y0, z0,
-                    x1, y1, z1,
-                    buffer, entry);
-                renderLine(i + 1,
-                    x1, y1, z1,
-                    lerp(x, i + 2), lerp(y, i + 2), lerp(z, i + 2),
-                    buffer, entry);
-                renderLine(i,
-                    x0, y0, z0,
-                    x0, y0 - 1f, z0,
-                    buffer, entry);
-                renderLineInv(x0, y0, z0, x0, y0 - 1f, z0, buffer, entry);
+        if (world != null && world.getBlockEntity(target) instanceof InsulatorBlockEntity) {
+            InsulatorBlockEntity insulator = (InsulatorBlockEntity) world.getBlockEntity(target);
+            MutableVec3d targetO;
+            if (insulator != null) {
+                targetO = insulator.getRenderOffset();
+                float x = target.getX() - pos.getX() - (float) offset.getX() + (float) targetO.getX();
+                float y = target.getY() - pos.getY() - (float) offset.getY() + (float) targetO.getY();
+                float z = target.getZ() - pos.getZ() - (float) offset.getZ() + (float) targetO.getZ();
+                float x0, y0, z0;
+                float x1, y1, z1;
+                for (int i = 0; i < SEGMENTS; i++) {
+                    x0 = lerp(x, i);
+                    y0 = lerp(y, i);
+                    z0 = lerp(z, i);
+                    x1 = lerp(x, i + 1);
+                    y1 = lerp(y, i + 1);
+                    z1 = lerp(z, i + 1);
+                    renderLine(i,
+                        x0, y0, z0,
+                        x1, y1, z1,
+                        buffer, entry);
+                    renderLine(i + 1,
+                        x1, y1, z1,
+                        lerp(x, i + 2), lerp(y, i + 2), lerp(z, i + 2),
+                        buffer, entry);
+                    renderLine(i,
+                        x0, y0, z0,
+                        x0, y0 - 1f, z0,
+                        buffer, entry);
+                    renderLineInv(x0, y0, z0, x0, y0 - 1f, z0, buffer, entry);
+                }
+                renderLine(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
+                renderLineInv(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
             }
-            renderLine(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
-            renderLineInv(0f, -1f, 0f, x, y - 1f, z, buffer, entry);
         }
     }
 
