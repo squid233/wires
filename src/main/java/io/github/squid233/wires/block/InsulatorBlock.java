@@ -33,7 +33,7 @@ import java.util.List;
  * @author squid233
  * @since 0.1.0
  */
-public final class InsulatorBlock extends BlockWithEntity {
+public final class InsulatorBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty CONNECTED = BooleanProperty.of("connected");
     public static final BooleanProperty INVISIBLE = BooleanProperty.of("invisible");
@@ -63,12 +63,12 @@ public final class InsulatorBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var stack = player.getStackInHand(hand);
-        if (!stack.isOf(Items.STICK)) {
+        if (!(stack.getItem() == Items.STICK)) {
             return ActionResult.PASS;
         }
         if (world.isClient) return ActionResult.SUCCESS;
         boolean invisible = state.get(INVISIBLE);
-        world.setBlockState(pos, state.with(INVISIBLE, !invisible), NOTIFY_LISTENERS | FORCE_STATE);
+        world.setBlockState(pos, state.with(INVISIBLE, !invisible), 2 | 16);
         return ActionResult.CONSUME;
     }
 
@@ -113,8 +113,8 @@ public final class InsulatorBlock extends BlockWithEntity {
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new InsulatorBlockEntity(pos, state);
+    public BlockEntity createBlockEntity(BlockView blockView) {
+        return new InsulatorBlockEntity();
     }
 
     @Override

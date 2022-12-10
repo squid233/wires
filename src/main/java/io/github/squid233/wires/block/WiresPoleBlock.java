@@ -61,12 +61,12 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var stack = player.getStackInHand(hand);
-        if (!stack.isOf(Items.STICK)) {
+        if (!(stack.getItem() == Items.STICK)) {
             return ActionResult.PASS;
         }
         if (world.isClient) return ActionResult.SUCCESS;
         boolean post = state.get(POST);
-        world.setBlockState(pos, state.with(POST, !post), NOTIFY_LISTENERS | FORCE_STATE);
+        world.setBlockState(pos, state.with(POST, !post), 2 | 16);
         return ActionResult.CONSUME;
     }
 
@@ -96,9 +96,6 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
-        }
         return direction.getAxis().isHorizontal()
             ? state.with(FACING_PROPERTIES.get(direction),
             connectsTo(neighborState, neighborState.isSideSolidFullSquare(world, neighborPos, direction.getOpposite())))
