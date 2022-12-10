@@ -115,9 +115,9 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         nx /= mag;
         ny /= mag;
         nz /= mag;
-        buffer.vertex(matrices.getPositionMatrix(), x1, y1, z1)
+        buffer.vertex(matrices.getModel(), x1, y1, z1)
             .color(0, 0, 0, 255)
-            .normal(matrices.getNormalMatrix(), nx, ny, nz)
+            .normal(matrices.getNormal(), nx, ny, nz)
             .next();
     }
 
@@ -132,9 +132,9 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         nx /= mag;
         ny /= mag;
         nz /= mag;
-        buffer.vertex(matrices.getPositionMatrix(), x0, y0, z0)
+        buffer.vertex(matrices.getModel(), x0, y0, z0)
             .color(0, 0, 0, 255)
-            .normal(matrices.getNormalMatrix(), nx, ny, nz)
+            .normal(matrices.getNormal(), nx, ny, nz)
             .next();
     }
 }
