@@ -2,15 +2,13 @@ package io.github.squid233.wires.block.entity;
 
 import io.github.squid233.wires.block.InsulatorBlock;
 import io.github.squid233.wires.util.MutableVec3d;
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.Packet;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
@@ -22,7 +20,7 @@ import java.util.Set;
  * @author squid233
  * @since 0.1.0
  */
-public final class InsulatorBlockEntity extends BlockEntity {
+public final class InsulatorBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
     private final Set<BlockPos> connectedTo = new HashSet<>();
     private final MutableVec3d renderOffset = new MutableVec3d(.5, .5, .5);
 
@@ -105,13 +103,8 @@ public final class InsulatorBlockEntity extends BlockEntity {
     }
 
     @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
     public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+        return writeNbt(new NbtCompound());
     }
 
     @Override
@@ -125,12 +118,12 @@ public final class InsulatorBlockEntity extends BlockEntity {
         var list = nbt.getList("connectedTo", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < list.size(); i++) {
             var c = list.getCompound(i);
-            connectedTo.add(posFromNbt(c));
+            connectedTo.add(new BlockPos(c.getInt("x"), c.getInt("y"), c.getInt("z")));
         }
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    public NbtCompound writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         var ro = new NbtCompound();
         ro.putDouble("x", renderOffset.getX());
@@ -146,5 +139,16 @@ public final class InsulatorBlockEntity extends BlockEntity {
             list.add(c);
         }
         nbt.put("connectedTo", list);
+        return nbt;
+    }
+
+    @Override
+    public void fromClientTag(NbtCompound tag) {
+        readNbt(tag);
+    }
+
+    @Override
+    public NbtCompound toClientTag(NbtCompound tag) {
+        return writeNbt(tag);
     }
 }
