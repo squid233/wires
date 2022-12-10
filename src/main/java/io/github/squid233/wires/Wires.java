@@ -12,7 +12,10 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.PosArgument;
 import net.minecraft.command.argument.Vec3ArgumentType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -37,15 +40,16 @@ public final class Wires implements ModInitializer {
                             literal("renderoffset").then(
                                 argument("pos", BlockPosArgumentType.blockPos()).then(
                                     argument("offset", Vec3ArgumentType.vec3(false)).executes(context -> {
-                                        var src = context.getSource();
-                                        var player = src.getPlayer();
-                                        var world = src.getWorld();
-                                        var pos = context.getArgument("pos", PosArgument.class)
-                                            .toAbsoluteBlockPos(src);
+                                        ServerPlayerEntity player = context.getSource().getPlayer();
+                                        World world = context.getSource().getWorld();
+                                        BlockPos pos = context.getArgument("pos", PosArgument.class).toAbsoluteBlockPos(context.getSource());
                                         if (player.isCreative() &&
-                                            world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
-                                            insulator.setRenderOffset(context.getArgument("offset", PosArgument.class)
-                                                .toAbsolutePos(src.withPosition(insulator.getRenderOffset().toImmutable())));
+                                            world.getBlockEntity(pos) instanceof InsulatorBlockEntity) {
+                                            InsulatorBlockEntity insulator = (InsulatorBlockEntity) world.getBlockEntity(pos);
+                                            if (insulator != null) {
+                                                insulator.setRenderOffset(context.getArgument("offset", PosArgument.class)
+                                                    .toAbsolutePos(context.getSource().withPosition(insulator.getRenderOffset().toImmutable())));
+                                            }
                                             return Command.SINGLE_SUCCESS;
                                         }
                                         throw new DynamicCommandExceptionType(o ->
