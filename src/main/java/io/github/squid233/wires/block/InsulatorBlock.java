@@ -33,7 +33,7 @@ import java.util.List;
  * @author squid233
  * @since 0.1.0
  */
-public final class InsulatorBlock extends BlockWithEntity {
+public final class InsulatorBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty CONNECTED = BooleanProperty.of("connected");
     public static final BooleanProperty INVISIBLE = BooleanProperty.of("invisible");
@@ -62,13 +62,13 @@ public final class InsulatorBlock extends BlockWithEntity {
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        var stack = player.getStackInHand(hand);
-        if (!stack.isOf(Items.STICK)) {
+        ItemStack stack = player.getStackInHand(hand);
+        if (!(stack.getItem() == Items.STICK)) {
             return ActionResult.PASS;
         }
         if (world.isClient) return ActionResult.SUCCESS;
         boolean invisible = state.get(INVISIBLE);
-        world.setBlockState(pos, state.with(INVISIBLE, !invisible), NOTIFY_LISTENERS | FORCE_STATE);
+        world.setBlockState(pos, state.with(INVISIBLE, !invisible), 2 | 16);
         return ActionResult.CONSUME;
     }
 
@@ -86,14 +86,21 @@ public final class InsulatorBlock extends BlockWithEntity {
     @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return switch (state.get(FACING)) {
-            case DOWN -> createCuboidShape(6, -1, 6, 10, 8, 10);
-            case UP -> createCuboidShape(6, 8, 6, 10, 17, 10);
-            case NORTH -> createCuboidShape(6, 6, -1, 10, 10, 8);
-            case SOUTH -> createCuboidShape(6, 6, 8, 10, 10, 17);
-            case WEST -> createCuboidShape(-1, 6, 6, 8, 10, 10);
-            case EAST -> createCuboidShape(8, 6, 6, 17, 10, 10);
-        };
+        switch (state.get(FACING)) {
+            case DOWN:
+                return createCuboidShape(6, -1, 6, 10, 8, 10);
+            case UP:
+                return createCuboidShape(6, 8, 6, 10, 17, 10);
+            case NORTH:
+                return createCuboidShape(6, 6, -1, 10, 10, 8);
+            case SOUTH:
+                return createCuboidShape(6, 6, 8, 10, 10, 17);
+            case WEST:
+                return createCuboidShape(-1, 6, 6, 8, 10, 10);
+            case EAST:
+                return createCuboidShape(8, 6, 6, 17, 10, 10);
+        }
+        return VoxelShapes.empty();
     }
 
     @SuppressWarnings("deprecation")
@@ -102,25 +109,35 @@ public final class InsulatorBlock extends BlockWithEntity {
         if (state.get(INVISIBLE)) {
             return VoxelShapes.empty();
         }
-        return switch (state.get(FACING)) {
-            case DOWN -> createCuboidShape(6, 0, 6, 10, 8, 10);
-            case UP -> createCuboidShape(6, 8, 6, 10, 16, 10);
-            case NORTH -> createCuboidShape(6, 6, 0, 10, 10, 8);
-            case SOUTH -> createCuboidShape(6, 6, 8, 10, 10, 16);
-            case WEST -> createCuboidShape(0, 6, 6, 8, 10, 10);
-            case EAST -> createCuboidShape(8, 6, 6, 16, 10, 10);
-        };
+        switch (state.get(FACING)) {
+            case DOWN:
+                return createCuboidShape(6, 0, 6, 10, 8, 10);
+            case UP:
+                return createCuboidShape(6, 8, 6, 10, 16, 10);
+            case NORTH:
+                return createCuboidShape(6, 6, 0, 10, 10, 8);
+            case SOUTH:
+                return createCuboidShape(6, 6, 8, 10, 10, 16);
+            case WEST:
+                return createCuboidShape(0, 6, 6, 8, 10, 10);
+            case EAST:
+                return createCuboidShape(8, 6, 6, 16, 10, 10);
+        }
+        return VoxelShapes.empty();
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new InsulatorBlockEntity(pos, state);
+    public BlockEntity createBlockEntity(BlockView blockView) {
+        return new InsulatorBlockEntity();
     }
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity insulator) {
-            insulator.disconnectAll();
+        if (world.getBlockEntity(pos) instanceof InsulatorBlockEntity) {
+            InsulatorBlockEntity insulator = (InsulatorBlockEntity) world.getBlockEntity(pos);
+            if (insulator != null) {
+                insulator.disconnectAll();
+            }
         }
         super.onBreak(world, pos, state, player);
     }

@@ -39,14 +39,22 @@ public final class HangingWiresPoleBlock extends Block implements Waterloggable 
     @SuppressWarnings("deprecation")
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return switch (rotation) {
-            case CLOCKWISE_90, COUNTERCLOCKWISE_90 -> switch (state.get(HORIZONTAL_AXIS)) {
-                case X -> state.with(HORIZONTAL_AXIS, Direction.Axis.Z);
-                case Z -> state.with(HORIZONTAL_AXIS, Direction.Axis.X);
-                case Y -> state;
-            };
-            case NONE, CLOCKWISE_180 -> state;
-        };
+        switch (rotation) {
+            case CLOCKWISE_90:
+            case COUNTERCLOCKWISE_90:
+                switch (state.get(HORIZONTAL_AXIS)) {
+                    case X:
+                        return state.with(HORIZONTAL_AXIS, Direction.Axis.Z);
+                    case Z:
+                        return state.with(HORIZONTAL_AXIS, Direction.Axis.X);
+                    case Y:
+                        return state;
+                }
+            case NONE:
+            case CLOCKWISE_180:
+                return state;
+        }
+        return state;
     }
 
     @Nullable
@@ -60,11 +68,15 @@ public final class HangingWiresPoleBlock extends Block implements Waterloggable 
     @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return switch (state.get(HORIZONTAL_AXIS)) {
-            case X -> createCuboidShape(7, 0, 0, 9, 16, 16);
-            case Z -> createCuboidShape(0, 0, 7, 16, 16, 9);
-            case Y -> VoxelShapes.empty();
-        };
+        switch (state.get(HORIZONTAL_AXIS)) {
+            case X:
+                return createCuboidShape(7, 0, 0, 9, 16, 16);
+            case Z:
+                return createCuboidShape(0, 0, 7, 16, 16, 9);
+            case Y:
+                return VoxelShapes.empty();
+        }
+        return VoxelShapes.empty();
     }
 
     @SuppressWarnings("deprecation")
@@ -89,7 +101,7 @@ public final class HangingWiresPoleBlock extends Block implements Waterloggable 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wires:hanging_wires_pole"
+          "name": "wires:iron_hanging_wires_pole"
         }
       ],
       "conditions": [

@@ -4,6 +4,7 @@ import io.github.squid233.wires.Wires;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -26,7 +27,7 @@ public class SelectorItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        var sub = stack.getSubNbt(subKey);
+        NbtCompound sub = stack.getSubTag(subKey);
         if (sub != null) {
             tooltip.add(new TranslatableText("item.tooltip." + Wires.NAMESPACE + ".selected",
                 sub.getInt("x"),
