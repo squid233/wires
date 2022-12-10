@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.minecraft.state.property.Properties.WATERLOGGED;
+
 /**
  * @author squid233
  * @since 0.1.0
@@ -97,7 +99,7 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return direction.getAxis().isHorizontal()
             ? state.with(FACING_PROPERTIES.get(direction),
