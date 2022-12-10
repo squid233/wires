@@ -6,8 +6,8 @@ import io.github.squid233.wires.util.MutableVec3d;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -17,7 +17,7 @@ import net.minecraft.world.World;
  * @author squid233
  * @since 0.1.0
  */
-public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<InsulatorBlockEntity> {
+public final class InsulatorBlockEntityRenderer extends BlockEntityRenderer<InsulatorBlockEntity> {
     private static final int SEGMENTS = 8;
     private static final double SEGMENTS_inv = 1.0 / (double) SEGMENTS;
     private static final float SEGMENTS_invf = 1.0f / (float) SEGMENTS;
@@ -25,7 +25,8 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
     private static final double C_inv = 1.0 / C;
     private static final double OFFSET = offsetY(0.0);
 
-    public InsulatorBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public InsulatorBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
     }
 
     @Override
@@ -90,11 +91,6 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         return C * Math.cosh((2 * x - 1.0) * C_inv) - C;
     }
 
-    @Override
-    public int getRenderDistance() {
-        return 96;
-    }
-
     private static void renderLine(int seg,
                                    float x0, float y0, float z0,
                                    float x1, float y1, float z1,
@@ -115,9 +111,13 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         nx /= mag;
         ny /= mag;
         nz /= mag;
-        buffer.vertex(matrices.getPositionMatrix(), x1, y1, z1)
+        buffer.vertex(matrices.getModel(), x1, y1, z1)
             .color(0, 0, 0, 255)
-            .normal(matrices.getNormalMatrix(), nx, ny, nz)
+            .normal(matrices.getNormal(), nx, ny, nz)
+            .next();
+        buffer.vertex(matrices.getModel(), x1, y1, z1)
+            .color(0, 0, 0, 255)
+            .normal(matrices.getNormal(), nx, ny, nz)
             .next();
     }
 
@@ -132,9 +132,9 @@ public final class InsulatorBlockEntityRenderer implements BlockEntityRenderer<I
         nx /= mag;
         ny /= mag;
         nz /= mag;
-        buffer.vertex(matrices.getPositionMatrix(), x0, y0, z0)
+        buffer.vertex(matrices.getModel(), x0, y0, z0)
             .color(0, 0, 0, 255)
-            .normal(matrices.getNormalMatrix(), nx, ny, nz)
+            .normal(matrices.getNormal(), nx, ny, nz)
             .next();
     }
 }
