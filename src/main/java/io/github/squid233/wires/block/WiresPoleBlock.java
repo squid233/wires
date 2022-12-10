@@ -4,6 +4,7 @@ import io.github.squid233.wires.Wires;
 import net.minecraft.block.*;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -60,7 +61,7 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        var stack = player.getStackInHand(hand);
+        ItemStack stack = player.getStackInHand(hand);
         if (!(stack.getItem() == Items.STICK)) {
             return ActionResult.PASS;
         }
@@ -73,17 +74,17 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        var world = ctx.getWorld();
-        var pos = ctx.getBlockPos();
-        var fluid = world.getFluidState(pos);
-        var pn = pos.north();
-        var ps = pos.south();
-        var pw = pos.west();
-        var pe = pos.east();
-        var sn = world.getBlockState(pn);
-        var ss = world.getBlockState(ps);
-        var sw = world.getBlockState(pw);
-        var se = world.getBlockState(pe);
+        World world = ctx.getWorld();
+        BlockPos pos = ctx.getBlockPos();
+        FluidState fluid = world.getFluidState(pos);
+        BlockPos pn = pos.north();
+        BlockPos ps = pos.south();
+        BlockPos pw = pos.west();
+        BlockPos pe = pos.east();
+        BlockState sn = world.getBlockState(pn);
+        BlockState ss = world.getBlockState(ps);
+        BlockState sw = world.getBlockState(pw);
+        BlockState se = world.getBlockState(pe);
         return getDefaultState()
             .with(NORTH, connectsTo(sn, sn.isSideSolidFullSquare(world, pn, Direction.SOUTH)))
             .with(SOUTH, connectsTo(ss, ss.isSideSolidFullSquare(world, pn, Direction.NORTH)))
