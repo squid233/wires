@@ -27,13 +27,13 @@ public final class WireItem extends SelectorItem {
             return ActionResult.SUCCESS;
         }
         var stack = context.getStack();
-        var sub = stack.getSubNbt(subKey);
+        var sub = stack.getSubTag(subKey);
         if (sub == null) {
             var tag = new NbtCompound();
             tag.putInt("x", pos.getX());
             tag.putInt("y", pos.getY());
             tag.putInt("z", pos.getZ());
-            stack.setSubNbt(subKey, tag);
+            stack.putSubTag(subKey, tag);
         } else {
             int x = sub.getInt("x");
             int y = sub.getInt("y");
@@ -45,7 +45,7 @@ public final class WireItem extends SelectorItem {
                     insulator.connect(x, y, z);
                 }
             }
-            stack.removeSubNbt(subKey);
+            stack.removeSubTag(subKey);
         }
         return ActionResult.CONSUME;
     }

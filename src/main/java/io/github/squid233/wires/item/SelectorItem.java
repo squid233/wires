@@ -26,7 +26,7 @@ public class SelectorItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        var sub = stack.getSubNbt(subKey);
+        var sub = stack.getSubTag(subKey);
         if (sub != null) {
             tooltip.add(new TranslatableText("item.tooltip." + Wires.NAMESPACE + ".selected",
                 sub.getInt("x"),
