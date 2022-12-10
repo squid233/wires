@@ -29,8 +29,8 @@ public final class InsulatorBlockEntity extends BlockEntity implements BlockEnti
     @SuppressWarnings("deprecation")
     private void _connect(BlockPos bpos) {
         connectedTo.add(bpos);
-        var oldState = getCachedState();
-        var state = oldState.with(InsulatorBlock.CONNECTED, true);
+        BlockState oldState = getCachedState();
+        BlockState state = oldState.with(InsulatorBlock.CONNECTED, true);
         //setCachedState(state);
         markDirty();
         if (world != null) {
@@ -40,19 +40,22 @@ public final class InsulatorBlockEntity extends BlockEntity implements BlockEnti
     }
 
     public void connect(int targetX, int targetY, int targetZ) {
-        var bpos = new BlockPos(targetX, targetY, targetZ);
-        if (world != null && world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
+        BlockPos bpos = new BlockPos(targetX, targetY, targetZ);
+        if (world != null && world.getBlockEntity(bpos) instanceof InsulatorBlockEntity) {
+            InsulatorBlockEntity insulator = (InsulatorBlockEntity) world.getBlockEntity(bpos);
             _connect(bpos);
-            insulator._connect(pos);
+            if (insulator != null) {
+                insulator._connect(pos);
+            }
         }
     }
 
     @SuppressWarnings("deprecation")
     public void disconnect(BlockPos bpos) {
         connectedTo.remove(bpos);
-        var oldState = getCachedState();
+        BlockState oldState = getCachedState();
         if (connectedTo.isEmpty()) {
-            var state = oldState.with(InsulatorBlock.CONNECTED, false);
+            BlockState state = oldState.with(InsulatorBlock.CONNECTED, false);
             //setCachedState(state);
             markDirty();
             if (world != null) {
@@ -63,14 +66,17 @@ public final class InsulatorBlockEntity extends BlockEntity implements BlockEnti
     }
 
     private void disconnectTarget(World world, BlockPos bpos) {
-        if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity insulator) {
-            insulator.disconnect(pos);
+        if (world.getBlockEntity(bpos) instanceof InsulatorBlockEntity) {
+            InsulatorBlockEntity insulator = (InsulatorBlockEntity) world.getBlockEntity(bpos);
+            if (insulator != null) {
+                insulator.disconnect(pos);
+            }
         }
     }
 
     public void disconnectAll() {
         if (world != null) {
-            for (var bpos : connectedTo) {
+            for (BlockPos bpos : connectedTo) {
                 disconnectTarget(world, bpos);
             }
             connectedTo.clear();
@@ -111,13 +117,13 @@ public final class InsulatorBlockEntity extends BlockEntity implements BlockEnti
     public void fromTag(BlockState state, NbtCompound tag) {
         super.fromTag(state, tag);
         if (tag.contains("renderOffset", 0xa)) {
-            var c = tag.getCompound("renderOffset");
+            NbtCompound c = tag.getCompound("renderOffset");
             renderOffset.set(c.getDouble("x"), c.getDouble("y"), c.getDouble("z"));
         }
         connectedTo.clear();
-        var list = tag.getList("connectedTo", 0xa);
+        NbtList list = tag.getList("connectedTo", 0xa);
         for (int i = 0; i < list.size(); i++) {
-            var c = list.getCompound(i);
+            NbtCompound c = list.getCompound(i);
             connectedTo.add(new BlockPos(c.getInt("x"), c.getInt("y"), c.getInt("z")));
         }
     }
@@ -125,14 +131,14 @@ public final class InsulatorBlockEntity extends BlockEntity implements BlockEnti
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        var ro = new NbtCompound();
+        NbtCompound ro = new NbtCompound();
         ro.putDouble("x", renderOffset.getX());
         ro.putDouble("y", renderOffset.getY());
         ro.putDouble("z", renderOffset.getZ());
         nbt.put("renderOffset", ro);
-        var list = new NbtList();
-        for (var bpos : connectedTo) {
-            var c = new NbtCompound();
+        NbtList list = new NbtList();
+        for (BlockPos bpos : connectedTo) {
+            NbtCompound c = new NbtCompound();
             c.putInt("x", bpos.getX());
             c.putInt("y", bpos.getY());
             c.putInt("z", bpos.getZ());
