@@ -96,7 +96,7 @@ public final class WiresPoleBlock extends HorizontalConnectingBlock {
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return direction.getAxis().isHorizontal()
             ? state.with(FACING_PROPERTIES.get(direction),
