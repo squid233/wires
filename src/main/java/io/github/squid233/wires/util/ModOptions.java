@@ -7,7 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author squid233
@@ -16,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 public final class ModOptions {
     private static final Logger logger = LogManager.getLogger(ModOptions.class);
     private static final File file = new File("config/wires.json");
+    private static final Path path = Paths.get("config/wires.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public boolean fileExists() {
@@ -23,16 +28,17 @@ public final class ModOptions {
     }
 
     public void load() {
-        try (var r = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            var opt = gson.fromJson(r, ModOptions.class);
+        try (Stream<String> stream = Files.lines(path)) {
+            String content = stream.collect(Collectors.joining(System.lineSeparator()));
+            Object opt = gson.fromJson(content, ModOptions.class);
         } catch (Exception e) {
             logger.error("Error loading " + Wires.NAMESPACE + " options", e);
         }
     }
 
     public void save() {
-        try (var w = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            gson.toJson(this, w);
+        try (AutoCloseable w = new BufferedWriter(new FileWriter(file))) {
+            gson.toJson(this, (Appendable) w);
         } catch (Exception e) {
             logger.error("Error saving " + Wires.NAMESPACE + " options", e);
         }
