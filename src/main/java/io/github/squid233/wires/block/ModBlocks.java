@@ -5,9 +5,10 @@ import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 /**
  * @author squid233
@@ -24,7 +25,7 @@ public final class ModBlocks {
         new InsulatorBlock(Settings.of(Material.METAL).strength(5f, 6f).sounds(BlockSoundGroup.METAL)));
 
     private static <T extends Block> T register(String name, T block) {
-        return Registry.register(Registry.BLOCK, new Identifier(Wires.NAMESPACE, name), block);
+        return Registry.register(Registries.BLOCK, new Identifier(Wires.NAMESPACE, name), block);
     }
 
     public static void register() {

@@ -5,8 +5,9 @@ import io.github.squid233.wires.block.ModBlocks;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 /**
  * @author squid233
@@ -17,7 +18,7 @@ public final class ModBlockEntities {
         FabricBlockEntityTypeBuilder.create(InsulatorBlockEntity::new, ModBlocks.INSULATOR).build());
 
     private static <T extends BlockEntity, U extends BlockEntityType<T>> U register(String name, U type) {
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Wires.NAMESPACE, name), type);
+        return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(Wires.NAMESPACE, name), type);
     }
 
     public static void register() {
